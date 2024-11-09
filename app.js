@@ -2,18 +2,39 @@ require('dotenv').config();
 const express = require("express");
 const app = express();
 const apiTestRouter = require("./src/routes/apiTest");
+const userRoutes = require("./src/routes/userRoutes");
+const cattleSellRoutes = require("./src/routes/cattleSellRoutes");
+// const otpRoutes = require("./src/routes/otpRoutes");
+const authRoutes = require("./src/routes/authRoutes");
+const { authenticateJWT } = require('./src/controllers/authController');
+const mongoose = require('mongoose')
 
 const PORT = process.env.PORT || 8000;
+const DB_URL = process.env.DB_URL
 
 // Middleware
 app.use(express.json());
+app.use(express.urlencoded({extended : true}))
+
+
+app.use('/login', authRoutes);
 
 // Routes
-app.get("/", (request, response) => {
-  response.send("Welcome to Node.js Server");
-});
+app.use("/user",authenticateJWT,userRoutes);
+// app.use("/auth",otpRoutes);
 
+app.use("/cattle",authenticateJWT,cattleSellRoutes);
 app.use("/api/test", apiTestRouter); // Test the API
+
+// Connect to DB
+mongoose.connect(DB_URL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then(() => {
+  console.log('Connected to MongoDB');
+}).catch((err) => {
+  console.log('Error connecting to MongoDB:', err);
+});
 
 // Server Start Function
 const start = async () => {
