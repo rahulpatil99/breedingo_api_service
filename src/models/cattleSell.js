@@ -79,6 +79,11 @@ const cattleSellSchema = new mongoose.Schema({
     required:true,
     default: 0,
   },
+  isDeleted: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
 });
 
 cattleSellSchema.plugin(AutoIncrement, { inc_field: 'cattleId' });
