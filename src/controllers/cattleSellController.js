@@ -1,4 +1,5 @@
 const cattleSell = require('../models/cattleSell')
+const saveCattleSell = require('../models/saveCattleSell')
 
 const getCurrentDateTime = () => {
   const currentDate = new Date();
@@ -14,10 +15,9 @@ const getCurrentDateTime = () => {
 }
 
 const addCattleForSell = async (request,response) =>{
-  //console.log(request.body)
   const cattleForSell = new cattleSell(request.body);
   await cattleForSell.save();
-  response.status(200).json({msg:"API test successfully"});
+  response.status(200).json({msg:"cattleSell added successfully"});
 }
 
 const getCattleSell = async (request,response) =>{
@@ -36,4 +36,36 @@ const getUserCattleForSale = async (request,response) =>{
   response.status(200).json(cattleForSell);
 }
 
-module.exports = {addCattleForSell,getCattleSell,getAllCattleSell,getUserCattleForSale};
+const getAllSaveCattleSell= async (request,response) =>{
+  const {userId} = request.user;
+  const saveUserCattleSellList = await saveCattleSell.find({userId})
+  .populate({
+    path:"cattleSellId", // populates all details from the cattleSell document
+  } 
+  )
+    .exec();
+
+    const UserCattleSellList = saveUserCattleSellList.map(item=>item.cattleSellId); //only get cattleSell information
+  response.status(200).json(UserCattleSellList);
+}
+
+const addSaveCattleSell= async (request,response) =>{
+  const {cattleSellId} = request.body;
+  const {userId} = request.user;
+  const saveUserCattleSell = new saveCattleSell({userId,cattleSellId});
+  await saveUserCattleSell.save();
+  response.status(200).json({msg:"cattleSell saved successfully"});
+}
+
+const deleteSaveCattleSell= async (request,response) =>{
+  console.log(request.param.cattleSellId)
+  const cattleSellId = request.param.cattleSellId;
+  const {userId} = request.user;
+  const deletedRecord = await saveCattleSell.findOneAndDelete({userId,cattleSellId});
+  if (!deletedRecord) {
+    return response.status(404).json({ message: 'Record not found' });
+  }
+  response.status(200).json({msg:"Record deleted successfully"});
+}
+
+module.exports = {addCattleForSell,getCattleSell,getAllCattleSell,getUserCattleForSale,getAllSaveCattleSell,addSaveCattleSell,deleteSaveCattleSell};

@@ -2,8 +2,8 @@ const mongoose = require('mongoose')
 const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 //define schema
-const cattleSellSchema = new mongoose.Schema({
-  cattleId: {
+const pregEasySchema = new mongoose.Schema({
+  pregEasyId: {
     type: Number,
     unique: true,
     auto: true, // Automatically generated (use a plugin like 'mongoose-sequence' for auto-increment)
@@ -18,11 +18,23 @@ const cattleSellSchema = new mongoose.Schema({
     required: true,   
     enum :['cows', 'Buffalo', 'Cow-calf', 'Buffalo calf']
   },
-  cattleBreed:{
+  breed:{
     type:String,
     required:true
   },
-  dateOfDelivery:{
+  tagNumber:{
+    type:String,
+    required:true
+  },
+  dateOfLastDelivery:{
+    type:Date,
+    required:true
+  },
+  dateOfFirstHeat:{
+    type:Date,
+    required:true
+  },
+  dateOfInsemination:{
     type:Date,
     required:true
   },
@@ -64,21 +76,6 @@ const cattleSellSchema = new mongoose.Schema({
     required:true,
     default: false,
   },
-  isHorn:{
-    type:Boolean,
-    required:true,
-    default: false,
-  },
-  weight:{
-    type:Number,
-    required:true,
-    default: 0,
-  },
-  price:{
-    type:Number,
-    required:true,
-    default: 0,
-  },
   isDeleted: {
     type: Boolean,
     required: true,
@@ -86,9 +83,9 @@ const cattleSellSchema = new mongoose.Schema({
   },
 });
 
-cattleSellSchema.plugin(AutoIncrement, { inc_field: 'cattleId' });
+pregEasySchema.plugin(AutoIncrement, { inc_field: 'pregEasyId' });
 
 //model create by using schema
-const CattleSell = mongoose.model('cattleSell',cattleSellSchema);
+const pregEasy = mongoose.model('pregEasy',pregEasySchema);
 
-module.exports = CattleSell;
+module.exports = pregEasy;

@@ -71,6 +71,12 @@ const userSchema = new mongoose.Schema({
     type:Date,
     required:false
   },
+  status:{
+    type: String,
+    required: true,   
+    enum :['In Progress', 'Active', 'InActive'],
+    default: 'In Progress',
+  },
   isDeleted: {
     type: Boolean,
     required: true,

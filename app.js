@@ -6,6 +6,7 @@ const userRoutes = require("./src/routes/userRoutes");
 const cattleSellRoutes = require("./src/routes/cattleSellRoutes");
 // const otpRoutes = require("./src/routes/otpRoutes");
 const authRoutes = require("./src/routes/authRoutes");
+const pregEasyRoutes = require("./src/routes/pregEasyRoutes");
 const { authenticateJWT } = require('./src/controllers/authController');
 const mongoose = require('mongoose')
 
@@ -24,6 +25,9 @@ app.use("/user",authenticateJWT,userRoutes);
 // app.use("/auth",otpRoutes);
 
 app.use("/cattle",authenticateJWT,cattleSellRoutes);
+
+app.use("/pregEasy",authenticateJWT,pregEasyRoutes);
+
 app.use("/api/test", apiTestRouter); // Test the API
 
 // Connect to DB
