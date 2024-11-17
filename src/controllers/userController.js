@@ -23,18 +23,47 @@ const getCurrentDateTime = () => {
 }
 
 const registerUser = async (request,response) =>{
-  console.log(request.body);
-  const user = new User(request.body);
-  user.lastLogIn = getCurrentDateTime();
-  const savedUser = await user.save();
-  const userCoinObject = {
-    userId :savedUser.userId,
-    totalCoin:200,
-
+  const userData = request.body;
+  userData.lastLogIn = getCurrentDateTime();
+  userData.status = "Active";
+  const user = await User.findOneAndUpdate(
+    { 
+      mobileNumber:userData.mobileNumber, 
+      status : 'In Progress'
+    },
+    userData,
+    {new:true}
+  );
+  if(!user){
+    return response.status(403).json({msg:"User not found or Already Present"});
   }
-  new UserCoin(userCoinObject).save();
-  response.status(200).json({msg:"API test successfully"});
+  else{
+    const userCoinObject = {
+      userId :user.userId,
+      totalCoin:200,
+    }
+    const userCoin = new UserCoin(userCoinObject);
+    const userCoinSave = await userCoin.save();
+    if(!userCoinSave)
+        return response.status(403).json({msg:"Coin wallet not create"});
+  }
+  return response.status(200).json({msg:"User created successfully"});
 }
+
+const userUpdate = async (request,response) =>{
+  const user = request.body;
+  const userData = await User.findOneAndUpdate(
+    {_id : request.user.userId},
+    user,
+    {new:true}
+  )
+  if(!userData){
+    return response.status(403).json({msg:"User not found"});
+  }
+  return response.status(400).json({msg:"User data updated successfully"});
+
+}
+
 const updateCreditCoin = 0;
 
 
@@ -75,4 +104,4 @@ const updateDebitCoin = async (request,response) =>{
   }
 }
 
-module.exports = {registerUser,updateDebitCoin};
+module.exports = {registerUser,userUpdate,updateDebitCoin};
