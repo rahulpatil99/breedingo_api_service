@@ -38,9 +38,9 @@ const verifyOTPAndGenerateToken = async (req, res) => {
     }
 
     // 3. Generate JWT token
-    console.log('JWT->',user._id)
+    const userStatus = user.status;
     const token = generateToken(user._id);
-    res.status(200).json({ token, msg: "Login successful" });
+    res.status(200).json({ token, userStatus ,msg: "Login successful" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
