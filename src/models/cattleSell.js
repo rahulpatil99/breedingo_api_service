@@ -18,6 +18,18 @@ const cattleSellSchema = new mongoose.Schema({
     required: true,   
     enum :['cows', 'Buffalo', 'Cow-calf', 'Buffalo calf']
   },
+  images: [
+    {
+      filePath: {
+        type: String,
+        required: true,
+      },
+      uploadDate: {
+        type: Date,
+        default: Date.now, // Automatically stores upload timestamp
+      },
+    },
+  ],
   cattleBreed:{
     type:String,
     required:true

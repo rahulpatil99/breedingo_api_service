@@ -17,6 +17,9 @@ const DB_URL = process.env.DB_URL
 app.use(express.json());
 app.use(express.urlencoded({extended : true}))
 
+app.get('/health', (req, res) => {
+  res.status(200).send('Healthy');
+});
 
 app.use('/login', authRoutes);
 

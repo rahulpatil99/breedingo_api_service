@@ -1,22 +1,29 @@
+const imageFileStore = require('../util/imageFileStore');
+
 const cattleSell = require('../models/cattleSell')
 const saveCattleSell = require('../models/saveCattleSell')
 
-const getCurrentDateTime = () => {
-  const currentDate = new Date();
-  const year = currentDate.getFullYear();
-  const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-  const day = String(currentDate.getDate()).padStart(2, '0');
-  const hours = String(currentDate.getHours()).padStart(2, '0');
-  const minutes = String(currentDate.getMinutes()).padStart(2, '0');
-  const seconds = String(currentDate.getSeconds()).padStart(2, '0');
-  
-  const formattedDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-  return formattedDateTime;
-}
 
 const addCattleForSell = async (request,response) =>{
-  const cattleForSell = new cattleSell(request.body);
+  const {files} = request;
+  const CattleData = request.body;
+  const userId = request.user.userId;
+  try {
+      const images = [];
+      for(const file of files){
+        const filePath = await imageFileStore(file.buffer,file.originalname,'cattle');
+        console.log(`File saved successfully at: ${filePath}`)
+      
+        images.push({filePath: filePath});
+      }
+      CattleData.images = images;
+    } catch (err) {
+        console.error(`Error: ${err.message}`);
+    }
+    CattleData.userId = userId
+  const cattleForSell = new cattleSell(CattleData);
   await cattleForSell.save();
+
   response.status(200).json({msg:"cattleSell added successfully"});
 }
 
@@ -25,9 +32,42 @@ const getCattleSell = async (request,response) =>{
   response.status(200).json(cattleForSell);
 }
 
+const deleteCattleForSell = async (request,response) => {
+    const userId = request.user.userId;
+    const cattleId = request.params.cattleId;
+    const deletedCattle = await cattleSell.findOneAndDelete({
+        userId : userId,
+        _id : cattleId
+    })
+    console.log(deletedCattle);
+    if (!deletedCattle) {
+      return response.status(404).json({ message: "Cattle not found or already deleted" });
+    }
+
+    // If successfully deleted, return the response
+    return response.status(200).json({
+      message: "Cattle successfully deleted"
+    });
+}
+
 const getAllCattleSell = async (request,response) =>{
-  const cattleForSell = await cattleSell.find();
-  response.status(200).json(cattleForSell);
+  /* pagination*/
+  const pageNumber = parseInt(request.query.page||1);
+  const limitPerPage = parseInt(request.query.limit||1);
+  const skip = (pageNumber-1)*limitPerPage;
+  const totalCount = await cattleSell.countDocuments();
+
+  const cattleForSell = await cattleSell.find()
+    .skip(skip)
+    .limit(limitPerPage)
+    .exec();
+  ;
+  response.status(200).json({
+    cattleForSell,
+    currentPage:pageNumber,
+    totalRecord:totalCount,
+    totalPages: Math.ceil(totalCount/limitPerPage)
+  });
 }
 
 const getUserCattleForSale = async (request,response) =>{
@@ -65,7 +105,16 @@ const deleteSaveCattleSell= async (request,response) =>{
   if (!deletedRecord) {
     return response.status(404).json({ message: 'Record not found' });
   }
-  response.status(200).json({msg:"Record deleted successfully"});
+  return response.status(200).json({msg:"Record deleted successfully"});
 }
 
-module.exports = {addCattleForSell,getCattleSell,getAllCattleSell,getUserCattleForSale,getAllSaveCattleSell,addSaveCattleSell,deleteSaveCattleSell};
+module.exports = {
+  addCattleForSell,
+  getCattleSell,
+  getAllCattleSell,
+  deleteCattleForSell,
+  getUserCattleForSale,
+  getAllSaveCattleSell,
+  addSaveCattleSell,
+  deleteSaveCattleSell
+};
