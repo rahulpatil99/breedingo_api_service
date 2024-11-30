@@ -17,6 +17,10 @@ const DB_URL = process.env.DB_URL
 app.use(express.json());
 app.use(express.urlencoded({extended : true}))
 
+app.get('/', (req, res) => {
+  res.status(200).send('Welcome to Breedingo App Service');
+});
+
 app.get('/health', (req, res) => {
   res.status(200).send('Healthy');
 });
@@ -34,10 +38,7 @@ app.use("/pregEasy",authenticateJWT,pregEasyRoutes);
 app.use("/api/test", apiTestRouter); // Test the API
 
 // Connect to DB
-mongoose.connect(DB_URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => {
+mongoose.connect(DB_URL).then(() => {
   console.log('Connected to MongoDB');
 }).catch((err) => {
   console.log('Error connecting to MongoDB:', err);
