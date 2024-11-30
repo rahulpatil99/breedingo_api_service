@@ -17,6 +17,10 @@ const DB_URL = process.env.DB_URL
 app.use(express.json());
 app.use(express.urlencoded({extended : true}))
 
+app.get('/', (req, res) => {
+  res.status(200).send('Welcome to Breedingo App Service');
+});
+
 app.get('/health', (req, res) => {
   res.status(200).send('Healthy');
 });
