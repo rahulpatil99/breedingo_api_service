@@ -64,7 +64,7 @@ const cattleSellSchema = new mongoose.Schema({
   },
   usedSemen:{
     type:String,
-    required:true,
+    required:false,
   },
   isDeworming:{
     type:Boolean,
