@@ -7,7 +7,7 @@ const cattleSellRoutes = require("./src/routes/cattleSellRoutes");
 // const otpRoutes = require("./src/routes/otpRoutes");
 const authRoutes = require("./src/routes/authRoutes");
 const pregEasyRoutes = require("./src/routes/pregEasyRoutes");
-const { authenticateJWT } = require('./src/controllers/authController');
+const { authenticateRequest } = require('./src/controllers/authController');
 const mongoose = require('mongoose')
 
 const PORT = process.env.PORT || 8000;
@@ -28,12 +28,12 @@ app.get('/health', (req, res) => {
 app.use('/login', authRoutes);
 
 // Routes
-app.use("/user",authenticateJWT,userRoutes);
+app.use("/user",authenticateRequest,userRoutes);
 // app.use("/auth",otpRoutes);
 
-app.use("/cattle",authenticateJWT,cattleSellRoutes);
+app.use("/cattle",authenticateRequest,cattleSellRoutes);
 
-app.use("/pregEasy",authenticateJWT,pregEasyRoutes);
+app.use("/pregEasy",authenticateRequest,pregEasyRoutes);
 
 app.use("/api/test", apiTestRouter); // Test the API
 
