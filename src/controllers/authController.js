@@ -2,66 +2,85 @@ require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const User = require('../models/user'); // Your User model
 
-// Helper to generate JWT
-const generateToken = (userId) => {
+// Helper to generate a JWT
+const generateJWTToken = (userId) => {
   return jwt.sign({ userId }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN, // e.g., '1d' for 1 day
+    expiresIn: process.env.JWT_EXPIRATION, // e.g., '1d' for 1 day
   });
 };
 
-// Step 1: Send OTP (assuming OTP is already verified)
-const generateOTP = async (req, res) =>{
-  console.log(req.body);
-const {mobileNumber} = req.body;
-return res.status(200).json({msg:"OTP sent"});
-  // Implement your OTP sending logic here
-  // Ensure OTP verification before generating JWT
-};
-
-// Step 2: Verify OTP and Generate JWT
-const verifyOTPAndGenerateToken = async (req, res) => {
-  const { mobileNumber, otpNumber } = req.body;
-  console.log(mobileNumber);
-
+// Step 1: Send OTP
+const sendOTP = async (req, res) => {
   try {
-    // 1. Validate the OTP for the mobile number (implement OTP verification here)
-    const isOTPValid = true; // Replace with your OTP verification logic
-    if (!isOTPValid) {
-      return res.status(400).json({ msg: "Invalid OTP" });
+    const { mobileNumber } = req.body;
+
+    if (!mobileNumber || !/^\d{10}$/.test(mobileNumber)) {
+      return res.status(400).json({ message: 'Invalid mobile number' });
     }
 
-    // 2. OTP is valid, find or create user in database
+    // Implement OTP generation and sending logic here
+    // Example: Save OTP with an expiration time in a cache or database
+
+    return res.status(200).json({ message: 'OTP sent successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Step 2: Verify OTP and Login
+const verifyOTPAndLogin = async (req, res) => {
+  const { mobileNumber, otp } = req.body;
+
+  try {
+    if (!mobileNumber || !otp) {
+      return res.status(400).json({ message: 'Mobile number and OTP are required' });
+    }
+
+    // Example: Verify OTP logic here
+    const isOTPValid = true; // Replace with actual verification logic
+    if (!isOTPValid) {
+      return res.status(400).json({ message: 'Invalid OTP' });
+    }
+
+    // Find or create user in the database
     let user = await User.findOne({ mobileNumber });
     if (!user) {
       user = new User({ mobileNumber });
       await user.save();
     }
 
-    // 3. Generate JWT token
-    const userStatus = user.status;
-    const token = generateToken(user._id);
-    res.status(200).json({ token, userStatus ,msg: "Login successful" });
+    // Generate JWT
+    const token = generateJWTToken(user._id);
+
+    return res.status(200).json({
+      token,
+      userStatus: user.status,
+      message: 'Login successful',
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-// Step 3: Middleware to Protect Routes
-const authenticateJWT = (req, res, next) => {
+// Step 3: Middleware to Authenticate Requests
+const authenticateRequest = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
 
   if (!token) {
-    return res.status(401).json({ msg: 'Access denied, token missing!' });
+    return res.status(401).json({ message: 'Access denied, token missing!' });
   }
 
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
-      return res.status(403).json({ msg: 'Invalid token' });
+      return res.status(403).json({ message: 'Invalid token' });
     }
-    req.user = decoded;
-    console.log(req.user)
+    req.user = decoded; // Attach user to request object
     next();
   });
 };
 
-module.exports = { generateOTP, verifyOTPAndGenerateToken, authenticateJWT };
+module.exports = {
+  sendOTP,
+  verifyOTPAndLogin,
+  authenticateRequest,
+};

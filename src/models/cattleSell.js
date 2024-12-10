@@ -22,7 +22,7 @@ const cattleSellSchema = new mongoose.Schema({
     {
       filePath: {
         type: String,
-        required: true,
+        required: false,
       },
       uploadDate: {
         type: Date,
@@ -64,7 +64,7 @@ const cattleSellSchema = new mongoose.Schema({
   },
   usedSemen:{
     type:String,
-    required:true,
+    required:false,
   },
   isDeworming:{
     type:Boolean,
@@ -90,6 +90,20 @@ const cattleSellSchema = new mongoose.Schema({
     type:Number,
     required:true,
     default: 0,
+  },
+  noOfCalving:{
+    type:String,
+    required:true,
+    default: false
+  },
+  tagNumber:{
+    type:String,
+    required:false,
+    default: false
+  },
+  dateOfInsemination:{
+    type:Date,
+    required:true
   },
   isDeleted: {
     type: Boolean,
