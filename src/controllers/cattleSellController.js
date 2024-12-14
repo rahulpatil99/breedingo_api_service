@@ -8,6 +8,7 @@ const addCattleForSell = async (request,response) =>{
   const {files} = request;
   const CattleData = request.body;
   const userId = request.user.userId;
+  if(files && files.length > 0){
   try {
       const images = [];
       for(const file of files){
@@ -20,6 +21,7 @@ const addCattleForSell = async (request,response) =>{
     } catch (err) {
         console.error(`Error: ${err.message}`);
     }
+  }
     CattleData.userId = userId
   const cattleForSell = new cattleSell(CattleData);
   await cattleForSell.save();
