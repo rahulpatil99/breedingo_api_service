@@ -35,11 +35,11 @@ const cattleSellSchema = new mongoose.Schema({
     required:true
   },
   dateOfDelivery:{
-    type:Date,
+    type:String,
     required:false
   },
   dateOfBirth:{
-    type:Date,
+    type:String,
     required:false
   },
   numberOfLactation:{
@@ -102,7 +102,7 @@ const cattleSellSchema = new mongoose.Schema({
     default: false
   },
   dateOfInsemination:{
-    type:Date,
+    type:String,
     required:false
   },
   isDeleted: {
