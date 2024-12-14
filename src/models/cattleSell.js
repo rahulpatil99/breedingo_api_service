@@ -58,28 +58,28 @@ const cattleSellSchema = new mongoose.Schema({
     default: 0,
   },
   isPregnant:{
-    type:Boolean,
-    required:true,
-    default: false,
+    type:String,
+    required:false,
+    default: "No",
   },
   usedSemen:{
     type:String,
     required:false,
   },
   isDeworming:{
-    type:Boolean,
+    type:String,
     required:true,
-    default: false,
+    default: "No",
   },
   isVaccination:{
-    type:Boolean,
+    type:String,
     required:true,
-    default: false,
+    default: "No",
   },
   isHorn:{
-    type:Boolean,
+    type:String,
     required:true,
-    default: false,
+    default: "No",
   },
   weight:{
     type:Number,
