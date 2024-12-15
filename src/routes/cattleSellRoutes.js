@@ -26,7 +26,7 @@ const {
 } = require("../controllers/cattleSellController")
 
 router.route("/sell").get(getAllCattleSell);
-router.route("/sell:id").get(getCattleSell);
+router.route("/sell/:id").get(getCattleSell);
 router.route("/sell").post(upload.array('images',2),addCattleForSell);
 router.route("/sell/:cattleId").delete(deleteCattleForSell);
 router.route("/sell/save").get(getAllSaveCattleSell);
