@@ -16,7 +16,7 @@ const cattleSellSchema = new mongoose.Schema({
   type:{
     type: String,
     required: true,   
-    enum :['cows', 'Buffalo', 'Cow-calf', 'Buffalo calf']
+    enum :['Cow', 'Buffalo', 'Cow-calf', 'Buffalo calf']
   },
   images: [
     {
