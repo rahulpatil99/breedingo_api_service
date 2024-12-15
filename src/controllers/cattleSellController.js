@@ -30,7 +30,8 @@ const addCattleForSell = async (request,response) =>{
 }
 
 const getCattleSell = async (request,response) =>{
-  const cattleForSell = await cattleSell.find(request.param.id);
+
+  const cattleForSell = await cattleSell.findById(request.params.id);
   response.status(200).json(cattleForSell);
 }
 
