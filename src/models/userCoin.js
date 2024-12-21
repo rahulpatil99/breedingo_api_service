@@ -3,10 +3,9 @@ const mongoose = require('mongoose')
 //define schema
 const userCoinSchema = new mongoose.Schema({
   userId: {
-    type: Number,
-    required: true,
-    unique: true,
-    auto: true, // Automatically generated (use a plugin like 'mongoose-sequence' for auto-increment)
+    type: mongoose.Schema.Types.ObjectId,
+        ref: 'User', // Reference to User model
+        required: true,
   },
   totalCoin: {
     type: Number,
