@@ -4,8 +4,9 @@ const User = require('../models/user'); // Your User model
 
 // Helper to generate a JWT
 const generateJWTToken = (userId) => {
+  const JWT_EXPIRATION_Value = process.env.JWT_EXPIRATION || '180d'
   return jwt.sign({ userId }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRATION, // e.g., '1d' for 1 day
+    expiresIn: JWT_EXPIRATION_Value, // e.g., '1d' for 1 day
   });
 };
 
