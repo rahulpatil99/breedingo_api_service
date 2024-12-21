@@ -39,7 +39,7 @@ const registerUser = async (request,response) =>{
   }
   else{
     const userCoinObject = {
-      userId :user.userId,
+      userId :user._id,
       totalCoin:200,
     }
     const userCoin = new UserCoin(userCoinObject);
@@ -48,6 +48,23 @@ const registerUser = async (request,response) =>{
         return response.status(403).json({msg:"Coin wallet not create"});
   }
   return response.status(200).json({msg:"User created successfully"});
+}
+
+const getUserInfo = async (request,response) =>{
+  const userId = request.user.userId;
+  const userData = await User.findById(userId);
+  if(!userData){
+    return response.status(403).json({msg:"User not found"});
+  }
+  const userCoinData = await UserCoin.findOne({userId:userId});
+  if(!userCoinData){
+    return response.status(403).json({msg:"wallet not found"});
+  }
+  console.log(userData);
+  console.log(userCoinData.totalCoin);
+  const userResponse = userData.toObject();
+    userResponse.totalCoin = userCoinData.totalCoin;
+  return response.status(200).json(userResponse);
 }
 
 const userUpdate = async (request,response) =>{
@@ -63,9 +80,6 @@ const userUpdate = async (request,response) =>{
   return response.status(400).json({msg:"User data updated successfully"});
 
 }
-
-const updateCreditCoin = 0;
-
 
 const updateDebitCoin = async (request,response) =>{
   const buyerId = request.body.buyerId;
@@ -104,4 +118,4 @@ const updateDebitCoin = async (request,response) =>{
   }
 }
 
-module.exports = {registerUser,userUpdate,updateDebitCoin};
+module.exports = {registerUser,userUpdate,updateDebitCoin,getUserInfo};
