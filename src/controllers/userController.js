@@ -77,7 +77,7 @@ const userUpdate = async (request,response) =>{
   if(!userData){
     return response.status(403).json({msg:"User not found"});
   }
-  return response.status(400).json({msg:"User data updated successfully"});
+  return response.status(200).json({msg:"User data updated successfully"});
 
 }
 
