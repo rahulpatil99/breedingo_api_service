@@ -7,4 +7,8 @@ const generateUniqueName =(originalFileName)=> {
   return uniqueName;
 }
 
-module.exports = generateUniqueName;
+const generateUniqueValue = ()=>{
+  return uuidv4;
+}
+
+module.exports = {generateUniqueName,generateUniqueValue};
