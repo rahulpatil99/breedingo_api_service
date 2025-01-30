@@ -61,6 +61,10 @@ const getAllCattleSell = async (request,response) =>{
   const totalCount = await cattleSell.countDocuments();
 
   const cattleForSell = await cattleSell.find()
+    .populate({
+      path : 'userId',
+      select : 'firstName lastName'
+    })
     .skip(skip)
     .limit(limitPerPage)
     .exec();
